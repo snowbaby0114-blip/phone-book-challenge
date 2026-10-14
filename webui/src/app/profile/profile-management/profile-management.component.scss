@@ -1,0 +1,54 @@
+:host {
+  display: block;
+}
+
+.card {
+  position: relative;
+  overflow: hidden;
+}
+
+.card__loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.form-stack--loading {
+  visibility: hidden;
+}
+
+.field-with-hint {
+  margin-bottom: 8px;
+}
+
+.alert {
+  mat-icon,
+  button {
+    flex: none;
+  }
+}
+
+.alert--action {
+  align-items: center;
+}
+
+.alert__message {
+  flex: 1;
+}
+
+.button-spinner {
+  margin-right: 8px;
+  margin-left: -4px;
+  --mdc-circular-progress-active-indicator-color: currentColor;
+}
+
+@media (max-width: 480px) {
+  .form-actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

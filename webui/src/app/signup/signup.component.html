@@ -1,0 +1,79 @@
+<div class="auth-page">
+  <div class="card auth-card">
+    <h1 class="auth-card__title">Create account</h1>
+    <p class="auth-card__subtitle">Fill in your details to get started.</p>
+
+    @if (errorMessage(); as message) {
+      <div class="alert alert--error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ message }}</span>
+      </div>
+    }
+
+    <form class="form-stack" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="signup__names">
+        <mat-form-field appearance="outline">
+          <mat-label>Name</mat-label>
+          <input matInput type="text" formControlName="name" autocomplete="given-name">
+          <mat-error>Enter your name.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Surname</mat-label>
+          <input matInput type="text" formControlName="surname" autocomplete="family-name">
+          <mat-error>Enter your surname.</mat-error>
+        </mat-form-field>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" formControlName="email" autocomplete="email">
+        @if (form.controls.email.hasError('required')) {
+          <mat-error>Enter your email address.</mat-error>
+        } @else if (form.controls.email.hasError('email')) {
+          <mat-error>Enter a valid email address.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput formControlName="password" autocomplete="new-password"
+               [type]="passwordVisible() ? 'text' : 'password'">
+        <button mat-icon-button matSuffix type="button" aria-label="Show passwords"
+                [attr.aria-pressed]="passwordVisible()" (click)="togglePasswordVisibility()">
+          <mat-icon>{{ passwordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-hint>At least {{ minPasswordLength }} characters</mat-hint>
+        @if (form.controls.password.hasError('required')) {
+          <mat-error>Enter a password.</mat-error>
+        } @else if (form.controls.password.hasError('minlength')) {
+          <mat-error>Use at least {{ minPasswordLength }} characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm password</mat-label>
+        <input matInput formControlName="confirmPassword" autocomplete="new-password"
+               [type]="passwordVisible() ? 'text' : 'password'" [errorStateMatcher]="confirmPasswordMatcher">
+        @if (form.controls.confirmPassword.hasError('required')) {
+          <mat-error>Confirm your password.</mat-error>
+        } @else if (form.hasError('passwordMismatch')) {
+          <mat-error>Passwords do not match.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="form-actions form-actions--block">
+        <button mat-flat-button color="primary" type="submit" class="signup__submit" [disabled]="submitting()">
+          <span class="signup__submit-content">
+            @if (submitting()) {
+              <mat-progress-spinner mode="indeterminate" diameter="20" aria-hidden="true" />
+            }
+            Create account
+          </span>
+        </button>
+      </div>
+    </form>
+
+    <p class="auth-card__footer">Already have an account? <a routerLink="/login">Sign in</a></p>
+  </div>
+</div>

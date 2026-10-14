@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-bottom: 16px;
+  padding: 16px;
+}
+
+.filters__search {
+  flex: 0 1 320px;
+
+  input::-webkit-search-cancel-button {
+    display: none;
+  }
+}
+
+.filters__select {
+  flex: 0 1 160px;
+}
+
+.filters__clear {
+  flex: none;
+  margin-left: auto;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.empty__icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 12px;
+  color: var(--pb-muted);
+  font-size: 48px;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact__detail {
+  color: var(--pb-muted);
+  font-size: 0.8125rem;
+}
+
+.chip mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.message-body {
+  white-space: pre-line;
+}
+
+@media (max-width: 959.98px) {
+  .filters__search {
+    flex-basis: 100%;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .filters__select,
+  .filters__clear {
+    flex-basis: 100%;
+  }
+}
+
+@media (min-width: 600px) {
+  .message-date,
+  .contact {
+    white-space: nowrap;
+  }
+
+  .message-body {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  :host ::ng-deep td.mat-column-body {
+    width: 100%;
+    min-width: 12rem;
+    max-width: 0;
+  }
+}

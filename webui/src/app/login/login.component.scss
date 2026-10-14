@@ -1,0 +1,13 @@
+:host {
+  display: block;
+}
+
+.login__submit {
+  --mdc-filled-button-container-height: 48px;
+}
+
+.login__submit-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}

@@ -1,0 +1,18 @@
+# Generated archives, including the quarantined and in-progress forms the
+# packaging scripts produce (*.zip does not match either suffix).
+*delivery*.zip
+phone-book-challenge_*.zip
+*.zip
+*.zip.INVALID
+*.zip.tmp
+
+# IDE
+.idea/
+.vs/
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

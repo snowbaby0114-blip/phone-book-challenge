@@ -1,0 +1,116 @@
+<section class="grid">
+  @if (searchable && !serverSide) {
+    <div class="grid__toolbar">
+      <mat-form-field class="grid__search" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ searchLabel }}</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="search" autocomplete="off" #search [value]="filter()" (input)="applyFilter(search.value)">
+        @if (filter()) {
+          <button matSuffix mat-icon-button type="button" aria-label="Clear search" (click)="applyFilter('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </div>
+  }
+
+  @if (sortableColumns.length) {
+    <div class="grid__sort">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Sort by</mat-label>
+        <mat-select [value]="activeSort().active" (selectionChange)="sortBy($event.value)">
+          @for (column of sortableColumns; track column.key) {
+            <mat-option [value]="column.key">{{ column.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <button mat-icon-button type="button" [disabled]="!activeSort().active"
+              [attr.aria-label]="activeSort().direction === 'desc' ? 'Sort ascending' : 'Sort descending'"
+              (click)="toggleSortDirection()">
+        <mat-icon>{{ activeSort().direction === 'desc' ? 'arrow_downward' : 'arrow_upward' }}</mat-icon>
+      </button>
+    </div>
+  }
+
+  <div class="grid__progress">
+    @if (loading) {
+      <mat-progress-bar mode="indeterminate" aria-label="Loading" />
+    }
+  </div>
+
+  @if (error) {
+    <div class="grid__state grid__state--error" role="alert">
+      <mat-icon aria-hidden="true">error_outline</mat-icon>
+      <p>{{ error }}</p>
+      <button mat-stroked-button type="button" (click)="retry.emit()">Try again</button>
+    </div>
+  } @else if (!hasRows) {
+    <output class="grid__state">
+      @if (loading) {
+        <p>Loading…</p>
+      } @else {
+        <mat-icon aria-hidden="true">inbox</mat-icon>
+        <p>{{ filter() ? 'No results match your search.' : emptyMessage }}</p>
+        @if (filter()) {
+          <button mat-button type="button" (click)="applyFilter('')">Clear search</button>
+        }
+      }
+    </output>
+  } @else {
+    <div class="grid__scroll">
+      <table mat-table matSort matSortDisableClear class="grid__table"
+             [dataSource]="dataSource"
+             [trackBy]="trackRow"
+             [matSortActive]="activeSort().active"
+             [matSortDirection]="activeSort().direction"
+             [attr.aria-label]="label || null"
+             [attr.aria-busy]="loading"
+             (matSortChange)="onSort($event)">
+        @for (column of columnDefs; track column.key) {
+          <ng-container [matColumnDef]="column.key">
+            <th mat-header-cell *matHeaderCellDef [mat-sort-header]="column.key" [disabled]="!column.sortable">
+              {{ column.label }}
+            </th>
+            <td mat-cell *matCellDef="let row" [attr.data-label]="column.label">
+              @if (cellTemplate) {
+                <ng-container [ngTemplateOutlet]="cellTemplate" [ngTemplateOutletContext]="{ $implicit: row, column: column }" />
+              } @else {
+                {{ cellValue(row, column) }}
+              }
+            </td>
+          </ng-container>
+        }
+        @if (actionDefs.length) {
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="grid__actions-header">
+              <span class="visually-hidden">Actions</span>
+            </th>
+            <td mat-cell *matCellDef="let row" class="grid__actions">
+              @for (action of actionDefs; track action.label) {
+                <button mat-stroked-button color="primary" type="button" (click)="action.action(row)">
+                  <mat-icon>{{ action.icon }}</mat-icon>
+                  {{ action.label }}
+                </button>
+              }
+            </td>
+          </ng-container>
+        }
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    @if (serverSide) {
+      <mat-paginator showFirstLastButtons aria-label="Select page"
+                     [length]="total"
+                     [pageIndex]="pageIndex"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions"
+                     (page)="pageChange.emit($event)" />
+    } @else {
+      <mat-paginator showFirstLastButtons aria-label="Select page"
+                     [pageSize]="pageSize"
+                     [pageSizeOptions]="pageSizeOptions" />
+    }
+  }
+</section>

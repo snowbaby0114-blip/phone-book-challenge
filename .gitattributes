@@ -1,0 +1,25 @@
+* text=auto
+
+# Shell scripts must keep LF: CRLF breaks the shebang with "bad interpreter".
+*.sh    text eol=lf
+*.mjs   text eol=lf
+
+# Windows-native scripts are stored WITH CRLF bytes and never converted.
+# `text eol=crlf` would instead store LF and convert on checkout, which makes
+# `git status` report the file as modified on extraction - the dirty-tree problem
+# the packaging rewrite exists to remove. cmd.exe genuinely needs CRLF: it seeks
+# labels by byte offset and misparses LF-only batch files.
+*.ps1   -text
+*.cmd   -text
+
+# Binary assets.
+*.ico   binary
+*.png   binary
+*.jpg   binary
+
+# Never include internal material in a `git archive` export.
+EVALUATE.md         export-ignore
+README_INTERNAL.md  export-ignore
+scripts/pack.mjs    export-ignore
+scripts/pack.sh     export-ignore
+scripts/pack.ps1    export-ignore

@@ -1,0 +1,44 @@
+form {
+  display: contents;
+}
+
+.type-toggle {
+  display: flex;
+  margin-bottom: 12px;
+
+  mat-button-toggle {
+    flex: 1;
+  }
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.recipient {
+  margin: 0 0 20px;
+  overflow-wrap: anywhere;
+
+  strong {
+    color: var(--pb-text);
+    font-weight: 500;
+  }
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.alert {
+  margin: 8px 0 0;
+
+  mat-icon {
+    flex: none;
+  }
+}
+
+.send-spinner {
+  --mdc-circular-progress-active-indicator-color: currentColor;
+  margin-right: var(--mat-filled-button-icon-spacing, 8px);
+  margin-left: var(--mat-filled-button-icon-offset, -4px);
+}

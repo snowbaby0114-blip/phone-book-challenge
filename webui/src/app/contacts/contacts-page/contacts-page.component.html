@@ -1,0 +1,24 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Contacts</h1>
+      <p class="page-subtitle">{{ subtitle() }}</p>
+    </div>
+  </header>
+
+  <app-data-grid
+    label="Contacts"
+    searchLabel="Search contacts"
+    emptyMessage="You have no contacts yet."
+    [columns]="columns"
+    [actions]="actions"
+    [data]="contacts()"
+    [loading]="loading()"
+    [error]="error()"
+    sortActive="name"
+    sortDirection="asc"
+    [searchable]="true"
+    [pageSize]="10"
+    [pageSizeOptions]="[10, 25, 50]"
+    (retry)="loadContacts()" />
+</div>

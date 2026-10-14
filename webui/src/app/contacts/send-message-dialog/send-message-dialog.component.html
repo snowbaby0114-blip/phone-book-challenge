@@ -1,0 +1,51 @@
+<form [formGroup]="form" (ngSubmit)="send()">
+  <h2 mat-dialog-title>Message {{ contact.name }} {{ contact.surname }}</h2>
+
+  <mat-dialog-content>
+    <mat-button-toggle-group class="type-toggle" formControlName="type" aria-label="Message type">
+      @for (type of messageTypes; track type) {
+        <mat-button-toggle [value]="type">
+          <mat-icon>{{ typeIcons[type] }}</mat-icon>
+          {{ type }}
+        </mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+
+    <p class="recipient" aria-live="polite" aria-atomic="true">To: <strong>{{ destination() }}</strong></p>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Message</mat-label>
+      <textarea matInput
+                #messageField
+                formControlName="body"
+                cdkFocusInitial
+                cdkTextareaAutosize
+                cdkAutosizeMinRows="4"
+                cdkAutosizeMaxRows="10"
+                [maxlength]="maxLength"
+                (keydown.control.enter)="sendFromKeyboard($event)"
+                (keydown.meta.enter)="sendFromKeyboard($event)"></textarea>
+      <mat-hint align="end">{{ bodyLength() }} / {{ maxLength }}</mat-hint>
+      <mat-error>Enter a message to send.</mat-error>
+    </mat-form-field>
+
+    @if (error(); as message) {
+      <div class="alert alert--error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ message }}</span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button type="button" mat-dialog-close [disabled]="sending()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="sending()">
+      @if (sending()) {
+        <mat-progress-spinner matButtonIcon class="send-spinner" mode="indeterminate" diameter="18" aria-hidden="true" />
+      } @else {
+        <mat-icon>send</mat-icon>
+      }
+      Send
+    </button>
+  </mat-dialog-actions>
+</form>

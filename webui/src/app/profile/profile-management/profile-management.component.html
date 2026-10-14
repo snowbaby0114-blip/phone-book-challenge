@@ -1,0 +1,142 @@
+<div class="page page--narrow">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">Profile</h1>
+      <p class="page-subtitle">Manage your personal details and keep your account secure.</p>
+    </div>
+  </header>
+
+  <section class="card" aria-labelledby="details-title">
+    <h2 class="card__title" id="details-title">Personal details</h2>
+    <p class="card__subtitle">The name and email address linked to your account.</p>
+
+    @if (profileLoading()) {
+      <mat-progress-bar class="card__loader" mode="indeterminate" aria-label="Loading your details" />
+    }
+
+    @if (profileLoadError(); as loadMessage) {
+      <div class="alert alert--error alert--action" role="alert">
+        <mat-icon aria-hidden="true">error_outline</mat-icon>
+        <span class="alert__message">{{ loadMessage }}</span>
+        <button mat-stroked-button type="button" (click)="loadProfile()">Retry</button>
+      </div>
+    } @else {
+      <form class="form-stack"
+            [class.form-stack--loading]="profileLoading()"
+            [formGroup]="profileForm"
+            #profileDirective="ngForm"
+            (ngSubmit)="updateProfile(profileDirective)">
+        <mat-form-field appearance="outline" floatLabel="always">
+          <mat-label>Name</mat-label>
+          <input matInput type="text" formControlName="name" autocomplete="given-name">
+          <mat-error>Name is required.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" floatLabel="always">
+          <mat-label>Surname</mat-label>
+          <input matInput type="text" formControlName="surname" autocomplete="family-name">
+          <mat-error>Surname is required.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" floatLabel="always">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" autocomplete="email">
+          @if (profileForm.controls.email.hasError('required')) {
+            <mat-error>Email is required.</mat-error>
+          } @else if (profileForm.controls.email.hasError('email')) {
+            <mat-error>Enter a valid email address.</mat-error>
+          }
+        </mat-form-field>
+
+        @if (profileSaveError(); as saveMessage) {
+          <div class="alert alert--error" role="alert">
+            <mat-icon aria-hidden="true">error_outline</mat-icon>
+            <span class="alert__message">{{ saveMessage }}</span>
+          </div>
+        }
+
+        <div class="form-actions">
+          <button mat-flat-button color="primary" type="submit"
+                  [disabled]="profileSaving() || profileForm.invalid || profileForm.pristine">
+            @if (profileSaving()) {
+              <mat-spinner matButtonIcon class="button-spinner" diameter="18" aria-hidden="true" />
+            }
+            Save changes
+          </button>
+        </div>
+      </form>
+    }
+  </section>
+
+  <section class="card" aria-labelledby="password-title">
+    <h2 class="card__title" id="password-title">Change password</h2>
+    <p class="card__subtitle">Choose a new password for your account.</p>
+
+    <form class="form-stack"
+          [formGroup]="passwordForm"
+          #passwordDirective="ngForm"
+          (ngSubmit)="updatePassword(passwordDirective)">
+      <mat-form-field appearance="outline">
+        <mat-label>Current password</mat-label>
+        <input matInput formControlName="currentPassword" autocomplete="current-password"
+               [type]="revealed().currentPassword ? 'text' : 'password'">
+        <button mat-icon-button matSuffix type="button" aria-label="Show current password"
+                [attr.aria-pressed]="revealed().currentPassword"
+                (click)="toggleReveal('currentPassword')">
+          <mat-icon>{{ revealed().currentPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error>Current password is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="field-with-hint" appearance="outline">
+        <mat-label>New password</mat-label>
+        <input matInput formControlName="newPassword" autocomplete="new-password"
+               [type]="revealed().newPassword ? 'text' : 'password'">
+        <button mat-icon-button matSuffix type="button" aria-label="Show new password"
+                [attr.aria-pressed]="revealed().newPassword"
+                (click)="toggleReveal('newPassword')">
+          <mat-icon>{{ revealed().newPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-hint>At least {{ minPasswordLength }} characters.</mat-hint>
+        @if (passwordForm.controls.newPassword.hasError('required')) {
+          <mat-error>New password is required.</mat-error>
+        } @else if (passwordForm.controls.newPassword.hasError('minlength')) {
+          <mat-error>Use at least {{ minPasswordLength }} characters.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Confirm new password</mat-label>
+        <input matInput formControlName="confirmNewPassword" autocomplete="new-password"
+               [type]="revealed().confirmNewPassword ? 'text' : 'password'">
+        <button mat-icon-button matSuffix type="button" aria-label="Show password confirmation"
+                [attr.aria-pressed]="revealed().confirmNewPassword"
+                (click)="toggleReveal('confirmNewPassword')">
+          <mat-icon>{{ revealed().confirmNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (passwordForm.controls.confirmNewPassword.hasError('required')) {
+          <mat-error>Confirm your new password.</mat-error>
+        } @else if (passwordForm.controls.confirmNewPassword.hasError('mismatch')) {
+          <mat-error>Passwords do not match.</mat-error>
+        }
+      </mat-form-field>
+
+      @if (passwordSaveError(); as saveMessage) {
+        <div class="alert alert--error" role="alert">
+          <mat-icon aria-hidden="true">error_outline</mat-icon>
+          <span class="alert__message">{{ saveMessage }}</span>
+        </div>
+      }
+
+      <div class="form-actions">
+        <button mat-flat-button color="primary" type="submit"
+                [disabled]="passwordSaving() || passwordForm.invalid">
+          @if (passwordSaving()) {
+            <mat-spinner matButtonIcon class="button-spinner" diameter="18" aria-hidden="true" />
+          }
+          Update password
+        </button>
+      </div>
+    </form>
+  </section>
+</div>

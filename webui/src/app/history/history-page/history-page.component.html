@@ -1,0 +1,108 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">History</h1>
+      <p class="page-subtitle">Every message you have sent, newest first.</p>
+    </div>
+  </header>
+
+  @if (isEmpty()) {
+    <section class="card empty">
+      <mat-icon class="empty__icon">forum</mat-icon>
+      <h2 class="card__title">No messages yet</h2>
+      <p class="card__subtitle">Messages you send to your contacts will show up here.</p>
+      <a mat-flat-button color="primary" routerLink="/contacts">Send your first message</a>
+    </section>
+  } @else {
+    <div class="card filters" role="search" aria-label="Filter messages" [formGroup]="filters">
+      <mat-form-field class="filters__search" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Search messages</mat-label>
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput #searchInput type="search" autocomplete="off" formControlName="search">
+        @if (searchText()) {
+          <button matSuffix mat-icon-button type="button" aria-label="Clear search" (click)="clearSearch(searchInput)">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="filters__select" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Contact</mat-label>
+        <mat-select formControlName="contactId">
+          <mat-option value="">All contacts</mat-option>
+          @for (contact of contactOptions(); track contact.id) {
+            <mat-option [value]="contact.id">{{ contact.label }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="filters__select" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="">All types</mat-option>
+          @for (type of types; track type) {
+            <mat-option [value]="type">{{ type }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="filters__select" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="">All statuses</mat-option>
+          @for (status of statuses; track status) {
+            <mat-option [value]="status">{{ status }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      @if (hasActiveFilters()) {
+        <button mat-stroked-button class="filters__clear" type="button" (click)="clearFilters()">Clear filters</button>
+      }
+    </div>
+
+    <app-data-grid
+      label="Message history"
+      emptyMessage="No messages match your filters."
+      [columns]="columns"
+      [data]="messages()"
+      [serverSide]="true"
+      [total]="total()"
+      [pageIndex]="query().page - 1"
+      [pageSize]="query().pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [sortActive]="query().sortBy"
+      [sortDirection]="query().sortDirection"
+      [loading]="loading()"
+      [error]="error()"
+      (pageChange)="onPageChange($event)"
+      (sortChange)="onSortChange($event)"
+      (retry)="reload()">
+      <ng-template #cell let-row let-column="column">
+        @switch (column.key) {
+          @case ('date') {
+            <span class="message-date">{{ row.date | date: 'MMM d, y, h:mm a' }}</span>
+          }
+          @case ('contact') {
+            <span class="contact">
+              <span>{{ row.contactName }}</span>
+              <span class="contact__detail">{{ contactDetail(row) }}</span>
+            </span>
+          }
+          @case ('type') {
+            <span class="chip">
+              <mat-icon>{{ row.type === 'SMS' ? 'sms' : 'email' }}</mat-icon>
+              {{ row.type }}
+            </span>
+          }
+          @case ('body') {
+            <span class="message-body" [title]="row.body">{{ row.body }}</span>
+          }
+          @case ('status') {
+            <span class="chip chip--{{ row.status | lowercase }}">{{ row.status }}</span>
+          }
+        }
+      </ng-template>
+    </app-data-grid>
+  }
+</div>

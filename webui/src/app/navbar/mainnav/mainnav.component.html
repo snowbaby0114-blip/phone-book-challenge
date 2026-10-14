@@ -1,0 +1,43 @@
+<mat-toolbar color="primary" class="mainnav">
+  <nav class="mainnav__nav" aria-label="Main">
+    <a class="mainnav__brand" routerLink="/contacts">
+      <mat-icon>phone</mat-icon>
+      <span>Phone Book</span>
+    </a>
+
+    <div class="mainnav__links">
+      @for (link of links(); track link.path) {
+        <a mat-button routerLinkActive="mainnav__link--active" ariaCurrentWhenActive="page"
+           [routerLink]="link.path">{{ link.label }}</a>
+      }
+      @if (isAuthenticated()) {
+        <span class="mainnav__user">
+          <mat-icon>account_circle</mat-icon>
+          <span class="visually-hidden">Signed in as</span>
+          <span class="mainnav__user-name">{{ firstName() }}</span>
+        </span>
+        <button mat-button type="button" (click)="signOut()">Sign out</button>
+      }
+    </div>
+
+    <button mat-icon-button type="button" class="mainnav__menu-button" aria-label="Open menu"
+            [matMenuTriggerFor]="menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" xPosition="before" aria-label="Main menu">
+      @for (link of links(); track link.path) {
+        <a mat-menu-item routerLinkActive="mainnav__menu-item--active" ariaCurrentWhenActive="page"
+           [routerLink]="link.path">
+          <mat-icon>{{ link.icon }}</mat-icon>
+          <span>{{ link.label }}</span>
+        </a>
+      }
+      @if (isAuthenticated()) {
+        <button mat-menu-item type="button" (click)="signOut()">
+          <mat-icon>logout</mat-icon>
+          <span>Sign out</span>
+        </button>
+      }
+    </mat-menu>
+  </nav>
+</mat-toolbar>
